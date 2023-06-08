@@ -19,10 +19,8 @@ on:
         options:
         - info
 env:
-  SYSDIG_URL: https://app.au1.sysdig.com
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-patched
-  BYPASS_SCAN_FAIL: false
+  IMAGE_NAME: ${{ github.repository }}
   
 jobs:
   build:
@@ -33,16 +31,17 @@ jobs:
     - uses: actions/checkout@v3
   
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --build-arg SECURE_API_TOKEN=${{ env.SECURE_API_TOKEN }} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
-    - name: Sysdig Secure Inline Scan - New
       run: |
-        curl -LO "https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/$(curl -L -s https://download.sysdig.com/scanning/sysdig-cli-scanner/latest_version.txt)/linux/amd64/sysdig-cli-scanner"
-        chmod +x ./sysdig-cli-scanner
-        SECURE_API_TOKEN=${{ secrets.SECURE_API_TOKEN }} ./sysdig-cli-scanner --apiurl ${{env.SYSDIG_URL}} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} || ${{ env.BYPASS_SCAN_FAIL }}
-      
+        docker build . --file Dockerfile \
+        --build-arg SECURE_API_TOKEN=${{ secrets.SECURE_API_TOKEN }} \
+        --build-arg MAX_DAYS=${{ vars.MAX_DAYS }} \
+        --build-arg RISKS_CSV=${{ vars.RISKS_CSV }} \
+        --build-arg API_URL=${{ vars.API_URL }} \
+        --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
     - name: Log in to the Container registry
-      run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
+      run: |
+        docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
     
     - name: Push the Docker image
       run: |

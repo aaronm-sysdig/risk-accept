@@ -10,4 +10,4 @@ WORKDIR /home/app
 
 USER app
 
-ENTRYPOINT ["python3", "/riskAccept.py"]
+ENTRYPOINT ["python3", "/risk-accept.py"]

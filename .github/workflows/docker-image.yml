@@ -21,6 +21,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+  API_URL: ${{ vars.API_URL }}
+  MAX_DAYS: ${{ vars.MAX_DAYS }}
+  RISKS_CSV: ${{ vars.RISKS_CSV }}
   
 jobs:
   build:
@@ -33,10 +37,10 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file Dockerfile \
-        --build-arg SECURE_API_TOKEN=${{ secrets.SECURE_API_TOKEN }} \
-        --build-arg MAX_DAYS=${{ vars.MAX_DAYS }} \
-        --build-arg RISKS_CSV=${{ vars.RISKS_CSV }} \
-        --build-arg API_URL=${{ vars.API_URL }} \
+        --build-arg SECURE_API_TOKEN=${{ env.SECURE_API_TOKEN }} \
+        --build-arg MAX_DAYS=${{ env.MAX_DAYS }} \
+        --build-arg RISKS_CSV=${{ env.RISKS_CSV }} \
+        --build-arg API_URL=${{ env.API_URL }} \
         --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Log in to the Container registry

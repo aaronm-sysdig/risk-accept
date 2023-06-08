@@ -1,4 +1,4 @@
-# Risk-Accept
+# riskAccept.py
 A python script to mass import/update vulnerability acceptances
 
 ## Parameters

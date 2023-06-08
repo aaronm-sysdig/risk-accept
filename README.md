@@ -46,3 +46,9 @@ RiskMitigated
 RiskNotRelevant
 Custom
 ```
+
+## Execution
+eg:
+```
+python3 riskAccept.py
+```

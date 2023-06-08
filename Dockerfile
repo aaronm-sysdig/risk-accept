@@ -1,6 +1,7 @@
 FROM python:3.11-alpine
 
 ADD risk-accept.py requirements.txt /
+ADD startup.sh /home/app
 
 RUN pip3 install -r requirements.txt
 
@@ -10,4 +11,4 @@ WORKDIR /home/app
 
 USER app
 
-ENTRYPOINT ["python3", "/risk-accept.py"]
+ENTRYPOINT ["sh", "-c", "/home/app/startup.sh"]

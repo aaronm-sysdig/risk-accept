@@ -4,7 +4,7 @@ ADD risk-accept.py requirements.txt /
 
 RUN pip3 install -r requirements.txt
 
-RUN useradd -m app
+RUN adduser -D app
 
 WORKDIR /home/app
 

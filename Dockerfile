@@ -1,5 +1,5 @@
 FROM python:3.11-slim
-RUN adduser -D app
+RUN useradd -m app
 
 ADD startup.sh /home/app
 RUN chmod +x /home/app/startup.sh

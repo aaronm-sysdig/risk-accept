@@ -31,20 +31,14 @@ payload = {
 def sysdig_request(method, url, headers, _json={}) -> requests.Response:
     objResult = requests.request(method=method, url=url, headers=headers, json=_json)
     while objResult.status_code == 429:
-        console_log(f"Got status 429, Sleeping for {SLEEP_429_SECONDS} seconds before trying again")
+        print(f"Got status 429, Sleeping for {SLEEP_429_SECONDS} seconds before trying again")
         time.sleep(SLEEP_429_SECONDS)
         objResult = requests.request(method=method, url=url, headers=headers, json=_json)
     return objResult
 
 
-def console_log(log_entry):
-    with open('TataDigitalImport-v2.log', 'a') as file_object:
-        file_object.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {log_entry}\n")
-        print(f"{log_entry}")
-
-
 def main() -> None:
-    console_log(f"Processing Input File '{risks_csv}'")
+    print(f"Processing Input File '{risks_csv}'")
     with open(risks_csv) as csvfile:
         arrRisks = list(csv.reader(csvfile, delimiter=','))
 
@@ -108,15 +102,15 @@ def main() -> None:
                                    f"{objJsonResult['data'][0]['riskAcceptanceDefinitionID']}"
                 # Now we delete it
                 objResult = sysdig_request(method='DELETE', url=strDeleteRiskURL, headers=auth_header)
-                console_log(f"Delete Status: {objResult.status_code}, CVE: {json.loads(objResult.text)['entityValue']}")
-                time.sleep(2)  # gives backend to sync
+                print(f"Delete Status: {objResult.status_code}, CVE: {json.loads(objResult.text)['entityValue']}")
+                time.sleep(1)  # gives backend to sync
         objResult = sysdig_request(method='POST', url=strAddRiskURL, headers=auth_header, _json=row)
         if objResult.status_code == 201:
-            console_log(f"Create Status: {objResult.status_code}, "
+            print(f"Create Status: {objResult.status_code}, "
                         f"CVE: {json.loads(objResult.text)['riskAcceptanceDefinitions'][0]['entityValue']}, "
                         f"Expiration Date: {json.loads(objResult.text)['riskAcceptanceDefinitions'][0]['expirationDate']}")
         else:
-            console_log(f"Status: {objResult.status_code}, Error Reason: {objResult.text}")
+            print(f"Status: {objResult.status_code}, Error Reason: {objResult.text}")
 
 
 if __name__ == "__main__":

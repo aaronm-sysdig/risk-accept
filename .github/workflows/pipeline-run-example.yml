@@ -14,7 +14,7 @@ on:
 env:
   IMAGE_NAME: ghcr.io/aaronm-sysdig/risk-accept:latest # Image name
   SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }} # Secure API token
-  API_URL: "http://app.au1.sysdig.com" # API URL
+  API_URL: "https://app.au1.sysdig.com" # API URL
   MAX_DAYS: "31" # Max days
   RISKS_CSV: "/risks/risks.csv" # Path to where the risks.csv file will be located
   REPO_RISKS_FOLDER: "/risks"

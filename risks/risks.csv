@@ -1,0 +1,5 @@
+"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
+"CVE-2018-19360","2023-06-30","RiskAvoided","Some Description","","",""
+"CVE-2018-19361","2023-06-30","RiskAvoided","Some Description","com.fasterxml.jackson.core:jackson-databind","",""
+"CVE-2018-19362","2023-06-30","RiskAvoided","Some Description","com.fasterxml.jackson.core:jackson-databind","2.9.7",""
+"CVE-2018-8088","2023-06-30","RiskAvoided","Some Description","","","ghcr.io/aaronm-sysdig/text4shell-docker-vuln:13"

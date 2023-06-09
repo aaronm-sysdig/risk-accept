@@ -31,7 +31,10 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        
+    - name: Show Risk Directory
+      run: |
+        ls -l ${{ env.REPO_RISKS_FOLDER }}
+
     - name: Run risk-accept
       run: |
         docker run \

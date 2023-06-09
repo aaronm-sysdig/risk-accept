@@ -39,9 +39,9 @@ jobs:
     - name: Run risk-accept
       run: |
         docker run \
-        -e RISKS_CSV=${{ env.RISKS_CSV }} \
-        -e SECURE_API_TOKEN=${{ env.SECURE_API_TOKEN }}\
-        -e API_URL=${{ env.API_URL }} \
-        -e MAX_DAYS=${{ env.MAX_DAYS }} \
+        -e RISKS_CSV="${{ env.RISKS_CSV }}" \
+        -e SECURE_API_TOKEN="${{ env.SECURE_API_TOKEN }}" \
+        -e API_URL="${{ env.API_URL }}" \
+        -e MAX_DAYS="${{ env.MAX_DAYS }}" \
         -v ${{ env.REPO_RISKS_FOLDER }}:${{ env.REPO_RISKS_FOLDER }} ${{ env.IMAGE_NAME }}
 

@@ -16,7 +16,7 @@ env:
   SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }} # Secure API token
   API_URL: "http://app.au1.sysdig.com" # API URL
   MAX_DAYS: "31" # Max days
-  RISKS_CSV: /risks/risks.csv # Path to where the risks.csv file will be located
+  RISKS_CSV: "/risks/risks.csv" # Path to where the risks.csv file will be located
   
 jobs:
   run:
@@ -42,5 +42,5 @@ jobs:
         -e SECURE_API_TOKEN=${{ env.SECURE_API_TOKEN }}\
         -e API_URL=${{ env.API_URL }} \
         -e MAX_DAYS=${{ env.MAX_DAYS }} \
-        -v ${{ env.RISKS_CSV }}:${{ env/RISKS_CSV }} ${{ env.IMAGE_NAME }}
+        -v ${{ env.RISKS_CSV }}:${{ env.RISKS_CSV }} ${{ env.IMAGE_NAME }}
 

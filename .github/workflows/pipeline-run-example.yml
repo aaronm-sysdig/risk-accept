@@ -12,12 +12,11 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ghcr.io/aaronm-sysdig/risk-accept:latest
+  IMAGE_NAME: ghcr.io/aaronm-sysdig/risk-accept:latest # Image name
   SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }} # Secure API token
-  API_URL: ${{ vars.API_URL }} # API URL
-  MAX_DAYS: ${{ vars.MAX_DAYS }} # Max days
-  RISKS_CSV: ${{ vars.RISKS_CSV }} # Path to where the risks.csv file will be located
-  
+  API_URL: "http://app.au1.sysdig.com" # API URL
+  MAX_DAYS: "31" # Max days
+  RISKS_CSV: /risks/risks.csv # Path to where the risks.csv file will be located
   
 jobs:
   run:
@@ -38,10 +37,10 @@ jobs:
         
     - name: Run risk-accept
       run: |
-        docker run -v ${{ env.RISKS_CSV }}:${{ env.RISKS_CSV }} ${{ env.IMAGE_NAME }}
+        docker run \
+        -e RISKS_CSV=${{ env.RISKS_CSV }} \
+        -e SECURE_API_TOKEN=${{ env.SECURE_API_TOKEN }}\
+        -e API_URL=${{ env.API_URL }} \
+        -e MAX_DAYS=${{ env.MAX_DAYS }} \
+        -v ${{ env.RISKS_CSV }}:${{ env/RISKS_CSV }} ${{ env.IMAGE_NAME }}
 
-
-    
-    - name: Push the Docker image
-      run: |
-        docker push -a ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}

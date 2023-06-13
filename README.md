@@ -75,12 +75,13 @@ python3 risk-accept.py
 
 ## Docker
 ```
-docker run \
-        -e RISKS_CSV="$RISKS_CSV" \   
-        -e SECURE_API_TOKEN="$SECURE_API_TOKEN" \    
-        -e API_URL="$API_URL" \   
-        -e MAX_DAYS="$MAX_DAYS" \    
-        -v ./risks/risks.csv:./risks/risks.csv ghcr.io/aaronm-sysdig/risk-accept:latest
+export RISKS_CSV=/risks/risks.csv 
+docker run \                     
+  -e RISKS_CSV="$RISKS_CSV" \
+  -e SECURE_API_TOKEN="$SECURE_API_TOKEN" \
+  -e API_URL="$API_URL" \
+  -e MAX_DAYS="$MAX_DAYS" \
+   -v $PWD/risks:/risks ghcr.io/aaronm-sysdig/risk-accept:latest
 ```
 
 ## Inline pipeline processsing

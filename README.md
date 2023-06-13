@@ -69,16 +69,17 @@ export RISKS_CSV=./risks/risks.csv
 
 ## Usage
 ```
+pip3 install -r requirements.txt
 python3 risk-accept.py
 ```
 
 ## Docker
 ```
 docker run \
-        -e RISKS_CSV="${{ env.RISKS_CSV }}" \
-        -e SECURE_API_TOKEN="${{ env.SECURE_API_TOKEN }}" \
-        -e API_URL="${{ env.API_URL }}" \
-        -e MAX_DAYS="${{ env.MAX_DAYS }}" \
+        -e RISKS_CSV="$RISKS_CSV" \   
+        -e SECURE_API_TOKEN="$SECURE_API_TOKEN" \    
+        -e API_URL="$API_URL" \   
+        -e MAX_DAYS="$MAX_DAYS" \    
         -v ./risks/risks.csv:./risks/risks.csv ghcr.io/aaronm-sysdig/risk-accept:latest
 ```
 
@@ -125,8 +126,7 @@ jobs:
         -e MAX_DAYS="${{ env.MAX_DAYS }}" \
         -v ${{ github.workspace }}${{ env.REPO_RISKS_FOLDER }}:${{ env.REPO_RISKS_FOLDER }} ${{ env.IMAGE_NAME }}
 ```
-## Example Github Execution results
-As you can see it will just post its results to the STDOUT
+## Example output
 
 ```
 Digest: sha256:7047e22e1e1748c83d3254d11b599653960bdcbf7cd474019e7e94bdd21d036d

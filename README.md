@@ -1,63 +1,89 @@
-# risk-accept.py
-A python script to mass import/update vulnerability acceptances.  For each vuln it will first check if there is one there already.  If there is, it will delete it then add in the new one.
+# Disclaimer
+
+Notwithstanding anything that may be contained to the contrary in your agreement(s) with Sysdig, Sysdig provides no support, no updates, and no warranty or guarantee of any kind with respect to these script(s), including as to their functionality or their ability to work in your environment(s).  Sysdig disclaims all liability and responsibility with respect to any use of these scripts. 
+
+# Sysdig Risk Acceptance as code Example
+Example python code that allows you to manage your Sysdig Vulnerability Risk Acceptance as code.
+
+***NOTE: This script uses unsupported, undocumented API's that may change at any point.***
+
+## CSV File format
+Create a CSV file in with the following columns for your risk you want to accept
+
+| Field | Mandatory? | Note |
+|---|---|---|
+| Vulnerability | Y | CVE ID of the vulnerability you want to accept the risk for |
+| Expiration Date | Y | Expiration Date you want the risk to expire at in format YYYY-MM-DD |
+| Reason | Y | One of the following Values `RiskOwned, RiskTransferred, RiskAvoided, RiskMitigated, RiskNotRelevant, Custom`  |
+| Description | Y | Description of Who and Why Accepted the Risk |
+| Package Name | N | Used if you want to scope the exception to a certain package. ie `com.fasterxml.jackson.core:jackson-databind` | 
+| Package Version | N | Used if you want to scope the exception to a certain package version. ie `2.9.7` | 
+| Image Name | N | Used if you want to scope the exception to a certain image (all packages in an image) ie `ghcr.io/aaronm-sysdig/text4shell-docker-vuln:13` |
+
+### Example CSV enteries
+
+Accept CVE-2018-19360 globally across all images & packages until 30th July 2023 with the Reason of Risk Owned
+
+```
+"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
+"CVE-2018-19360","2023-07-30","RiskOwned","Base Image patch due to be rolled out environment wide on 15th July","","",""
+```
+
+Accept CVE-2018-19361 for the package `com.fasterxml.jackson.core:jackson-databind` until 30th July 2023 with the Reason of Risk Owned
+
+```
+"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
+"CVE-2018-19361","2023-07-30","RiskOwned","Base Image patch due to be rolled out environment wide on 15th July","com.fasterxml.jackson.core:jackson-databind","",""
+```
+
+Accept CVE-2018-19362 for the package `com.fasterxml.jackson.core:jackson-databind` version `2.9.7` until 30th July 2023 with the Reason of Risk Owned
+
+```
+"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
+"CVE-2018-19362","2023-07-30","RiskOwned","Base Image patch due to be rolled out environment wide on 15th July","com.fasterxml.jackson.core:jackson-databind","2.9.7",""
+```
+
+Accept CVE-2018-19362 for the image `ghcr.io/aaronm-sysdig/text4shell-docker-vuln:13` until 30th July 2023 with the Reason of Risk Owned
+
+```
+"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
+"CVE-2018-8088","2023-07-30","RiskOwned","Base Image patch due to be rolled out environment wide on 15th July","","","ghcr.io/aaronm-sysdig/text4shell-docker-vuln:13"
+```
 
 ## Parameters
 Set the below environment variables
 
-1) Your Secure API Token
 ```
-SECURE_API_TOKEN=1c708a83-e413-4c45-87fc-9df23163ca82
-```
-2) Max Days that the CSV file expirations are allowed into the future
-```
-MAX_DAYS=31
-```
-3) API URL
-```
-API_URL=https://app.au1.sysdig.com
-```
-4) Risks CSV file that contains your risk acceptance data
-```
-RISKS_CSV=./risks.csv
+# Your Sysdig Secure API Token
+export SECURE_API_TOKEN=1c708a83-e413-4c45-87fc-9df23163ca82 
+
+# Max # of Days from today that the expiration in the CSV is allowed to be in the future
+export MAX_DAYS=30 
+
+# Your Sysdig Secure region URL
+export API_URL=https://app.au1.sysdig.com 
+
+# Path to your defined csv file
+export RISKS_CSV=./risks/risks.csv 
 ```
 
-## The CSV file containing your risks needs to be in the following format
+## Usage
 ```
-"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
-```
-For Example the below file provides examples of each possibility
-0) Header row that will be ignored.  If you dont have a header row, your first row will be ignored... so have one.
-1) Simple Global risk acceptance
-2) Package acceptance for any version
-3) Package acceptance for a specific version
-4) Specific image
-```
-"Vulnerability","Expiration Date","Reason","Description","Package Name","Package Version","Image Name"
-"CVE-2018-19360","2023-07-30","RiskAvoided","Some Description","","",""
-"CVE-2018-19361","2023-06-30","RiskAvoided","Some Description","com.fasterxml.jackson.core:jackson-databind","",""
-"CVE-2018-19362","2023-06-30","RiskAvoided","Some Description","com.fasterxml.jackson.core:jackson-databind","2.9.7",""
-"CVE-2018-8088","2023-06-30","RiskAvoided","Some Description","","","ghcr.io/aaronm-sysdig/text4shell-docker-vuln:13"
-```
-nb: 'Reason' needs to match the reasons (case sensitive) that are present in the UI.  These are
-```
-RiskOwned
-RiskTransferred
-RiskMitigated
-RiskNotRelevant
-Custom
-```
-
-## Execution
-eg:
-```
-python3 riskAccept.py
+python3 risk-accept.py
 ```
 
 ## Docker
-Execution within a docker container is also possible.  a Dockerfile is provided
+```
+docker run \
+        -e RISKS_CSV="${{ env.RISKS_CSV }}" \
+        -e SECURE_API_TOKEN="${{ env.SECURE_API_TOKEN }}" \
+        -e API_URL="${{ env.API_URL }}" \
+        -e MAX_DAYS="${{ env.MAX_DAYS }}" \
+        -v ./risks/risks.csv:./risks/risks.csv ghcr.io/aaronm-sysdig/risk-accept:latest
+```
 
 ## Inline pipeline processsing
-Also possible.  Here is an example Github Action to demonstrate how.  the `docker run` command will require a little modification depending upon your usage but the broad strokes are you need to set the required environment variables and mount in a folder that contains your csv file for processing.  Once all that lines up it will run.
+An example Github Action to demonstrate how this can be used in your Github repo, where you can store your risk acceptance with your code/pipeline
 
 ```
 name: risk-accept Pipeline Run Example
@@ -99,7 +125,7 @@ jobs:
         -e MAX_DAYS="${{ env.MAX_DAYS }}" \
         -v ${{ github.workspace }}${{ env.REPO_RISKS_FOLDER }}:${{ env.REPO_RISKS_FOLDER }} ${{ env.IMAGE_NAME }}
 ```
-## Example Github Execution rsults
+## Example Github Execution results
 As you can see it will just post its results to the STDOUT
 
 ```

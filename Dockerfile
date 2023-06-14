@@ -1,12 +1,12 @@
 FROM python:3.11-slim
 
-ADD risk-accept.py requirements.txt /
-
 RUN useradd -m app
-RUN pip3 install -r /requirements.txt
-RUN apt update && apt -y install wget
+
+ADD risk-accept.py requirements.txt /home/app/
+
+RUN pip3 install -r /home/app/requirements.txt
 
 WORKDIR /home/app
 USER app
 
-ENTRYPOINT ["python3","/risk-accept.py"]
+ENTRYPOINT ["python3","/home/app/risk-accept.py"]

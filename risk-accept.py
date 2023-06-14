@@ -98,7 +98,7 @@ def main() -> None:
             objJsonResult = json.loads(objResult.text)
             if objJsonResult['page']['matched'] > 0:
                 # I.E we found one
-                strDeleteRiskURL = f"https://app.au1.sysdig.com/api/scanning/riskmanager/v2/definitions/"\
+                strDeleteRiskURL = f"{api_url}/api/scanning/riskmanager/v2/definitions/"\
                                    f"{objJsonResult['data'][0]['riskAcceptanceDefinitionID']}"
                 # Now we delete it
                 objResult = sysdig_request(method='DELETE', url=strDeleteRiskURL, headers=auth_header)
